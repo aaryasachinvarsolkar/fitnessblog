@@ -1,49 +1,53 @@
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const mongoose = require('mongoose');
-const ejs = require('ejs');
-
-const app = express();
-
-// Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fitwell-blog', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// View engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
-// Routes
-app.get('/', (req, res) => {
-  res.render('index', { posts: [] });
-});
-
-app.get('/categories', (req, res) => {
-  res.render('categories');
-});
-
-app.get('/create-post', (req, res) => {
-  res.render('create-post');
-});
-
-app.post('/posts', (req, res) => {
-  // In a real app, save to database
-  console.log('New post:', req.body);
-  res.redirect('/');
-});
-
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle form submission for new posts
+    const postForm = document.getElementById('post-form');
+    if (postForm) {
+      postForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const postData = {
+          title: document.getElementById('title').value,
+          excerpt: document.getElementById('excerpt').value,
+          content: document.getElementById('content').value,
+          category: document.getElementById('category').value
+        };
+        
+        // In a real app, this would send to your backend
+        console.log('Post data:', postData);
+        alert('Post created successfully! (This would save to DB in real app)');
+        window.location.href = '/';
+      });
+    }
+    
+    // Simulate loading posts from API
+    if (document.getElementById('posts-container')) {
+      fetchPosts();
+    }
+  });
+  
+  function fetchPosts() {
+    // Simulated API call
+    setTimeout(() => {
+      const postsContainer = document.getElementById('posts-container');
+      postsContainer.innerHTML = `
+        <div class="col-md-6">
+          <div class="card post-card">
+            <div class="card-body">
+              <h5 class="card-title">5 Morning Yoga Poses for Beginners</h5>
+              <p class="card-text">Start your day with these simple yoga poses to improve flexibility and mental clarity.</p>
+              <a href="/post/1" class="btn btn-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card post-card">
+            <div class="card-body">
+              <h5 class="card-title">Healthy Meal Prep Ideas</h5>
+              <p class="card-text">Simple recipes that will keep you energized all week while saving you time.</p>
+              <a href="/post/2" class="btn btn-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }, 500);
+  }
